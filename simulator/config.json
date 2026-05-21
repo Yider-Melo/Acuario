@@ -3,7 +3,7 @@
   "topic": "acuario/sensores/sensor-01",
   "intervalMs": 3000,
   "baseValues": {
-    "temperature": 35.0,
+    "temperature": 25.0,
     "ph": 7.5,
     "waterLevel": 55.0,
     "salinity": 32.0
@@ -19,5 +19,11 @@
     "ph": 0.08,
     "waterLevel": 0.5,
     "salinity": 0.2
+  },
+  "reversion": {
+    "temperature": 0.04,
+    "ph": 0.15,
+    "waterLevel": 0.02,
+    "salinity": 0.03
   }
 }

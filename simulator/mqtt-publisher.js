@@ -18,15 +18,34 @@ const state = {
   salinity: config.baseValues.salinity
 };
 
+const midpoints = {
+  temperature: 25,
+  ph: 7.5,
+  waterLevel: 50,
+  salinity: 32
+};
+
 function randomNoise(range) {
   return (Math.random() * range * 2 - range);
+}
+
+function reversion(key, value) {
+  const mp = midpoints[key];
+  const diff = value - mp;
+  const strength = config.reversion[key] || 0;
+  if (diff === 0 || strength === 0) return 0;
+  if (Math.random() < strength * Math.abs(diff)) {
+    return -Math.sign(diff) * (0.3 + Math.random() * 0.7);
+  }
+  return 0;
 }
 
 function advanceTrend() {
   Object.keys(state).forEach((key) => {
     const trend = config.trends[key];
     const noise = config.noise[key];
-    state[key] = Number((state[key] + trend + randomNoise(noise)).toFixed(2));
+    const revert = reversion(key, state[key]);
+    state[key] = Number((state[key] + trend + randomNoise(noise) + revert).toFixed(2));
   });
 }
 
