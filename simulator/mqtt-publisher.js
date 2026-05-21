@@ -40,12 +40,17 @@ function reversion(key, value) {
   return 0;
 }
 
+function anomaly() {
+  if (Math.random() >= (config.anomalyChance || 0)) return 0;
+  return (Math.random() * 2 - 1) * (config.anomalyStrength || 5);
+}
+
 function advanceTrend() {
   Object.keys(state).forEach((key) => {
-    const trend = config.trends[key];
     const noise = config.noise[key];
     const revert = reversion(key, state[key]);
-    state[key] = Number((state[key] + trend + randomNoise(noise) + revert).toFixed(2));
+    const spike = anomaly();
+    state[key] = Number((state[key] + randomNoise(noise) + revert + spike).toFixed(2));
   });
 }
 

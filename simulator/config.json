@@ -8,22 +8,24 @@
     "waterLevel": 55.0,
     "salinity": 32.0
   },
+  "anomalyChance": 0.03,
+  "anomalyStrength": 5,
   "trends": {
-    "temperature": 0.02,
-    "ph": -0.01,
-    "waterLevel": 0.1,
-    "salinity": 0.05
+    "temperature": 0,
+    "ph": 0,
+    "waterLevel": 0,
+    "salinity": 0
   },
   "noise": {
-    "temperature": 0.6,
-    "ph": 0.08,
-    "waterLevel": 0.5,
-    "salinity": 0.2
+    "temperature": 0.3,
+    "ph": 0.04,
+    "waterLevel": 0.2,
+    "salinity": 0.1
   },
   "reversion": {
-    "temperature": 0.04,
-    "ph": 0.15,
-    "waterLevel": 0.02,
-    "salinity": 0.03
+    "temperature": 0.12,
+    "ph": 0.4,
+    "waterLevel": 0.08,
+    "salinity": 0.1
   }
 }
