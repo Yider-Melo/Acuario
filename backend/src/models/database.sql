@@ -45,5 +45,5 @@ INSERT INTO user_configs (
   ph_min, ph_max,
   water_level_min, water_level_max,
   salinity_min, salinity_max
-) VALUES (22.0, 28.0, 7.0, 8.0, 30.0, 70.0, 30.0, 35.0)
+) VALUES (23.0, 27.0, 7.2, 7.8, 50.0, 60.0, 31.0, 33.0)
 ON CONFLICT DO NOTHING;

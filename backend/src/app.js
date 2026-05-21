@@ -5,6 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const apiRoutes = require('./routes/api');
 const mqttListener = require('./services/mqtt-listener');
+const migrate = require('./config/migrate');
 
 dotenv.config();
 
@@ -33,8 +34,11 @@ io.on('connection', (socket) => {
   });
 });
 
-mqttListener.initialize(io).catch((err) => {
-  console.error('[MQTT Listener] Error inicializando:', err.message);
+migrate().then(() => {
+  return mqttListener.initialize(io);
+}).catch((err) => {
+  console.error('[Backend] Error durante la inicialización:', err.message);
+  process.exit(1);
 });
 
 const port = process.env.PORT || 4000;

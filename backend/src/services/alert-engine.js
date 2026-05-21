@@ -88,8 +88,12 @@ async function evaluateReading(reading) {
       message: alert.message,
       extraData: { threshold: alert.threshold }
     };
-    await saveAlert(entry);
-    alerts.push(entry);
+    try {
+      await saveAlert(entry);
+      alerts.push(entry);
+    } catch (err) {
+      console.error('[AlertEngine] Error guardando alerta crítica:', err.message);
+    }
   }
 
   const predictiveAlerts = [];
@@ -117,8 +121,12 @@ async function evaluateReading(reading) {
   }
 
   for (const alert of predictiveAlerts) {
-    await saveAlert(alert);
-    alerts.push(alert);
+    try {
+      await saveAlert(alert);
+      alerts.push(alert);
+    } catch (err) {
+      console.error('[AlertEngine] Error guardando alerta predictiva:', err.message);
+    }
   }
 
   if (alerts.length === 0) {
