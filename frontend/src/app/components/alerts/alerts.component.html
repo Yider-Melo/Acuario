@@ -1,18 +1,90 @@
-<div class="alerts-card">
-  <div class="alerts-header">
-    <h2>Alertas</h2>
-    <button type="button" (click)="toggleShowAll()">{{ showAllAlerts ? 'Mostrar solo la última' : 'Mostrar todas las alertas' }}</button>
-    <span class="tag">Actualizaciones constantes</span>
-  </div>
-  <div class="alert-list">
-    <div class="alert-item" *ngFor="let alert of alerts">
-      <div class="alert-meta">
-        <strong>{{ alert.type | uppercase }}</strong>
-        <span>{{ alert.parameter }}</span>
-        <span>{{ alert.timestamp | date:'short' }}</span>
-      </div>
-      <p>{{ alert.message }}</p>
-      <small>Valor: {{ alert.value }}</small>
+<div class="alerts-page">
+  <aside class="filter-panel">
+    <div class="filter-header">
+      <h3>Filtros</h3>
+      <button type="button" class="btn-clear" (click)="clearFilters()">Limpiar</button>
     </div>
-  </div>
+    <div class="filter-body">
+      <div class="filter-group">
+        <label>Tipo</label>
+        <select [(ngModel)]="filters.type" (change)="loadAlerts()">
+          <option value="">Todos</option>
+          <option value="critical">Cr&iacute;tica</option>
+          <option value="predictive">Predictiva</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Par&aacute;metro</label>
+        <select [(ngModel)]="filters.parameter" (change)="loadAlerts()">
+          <option value="">Todos</option>
+          <option value="temperature">Temperatura</option>
+          <option value="ph">pH</option>
+          <option value="waterLevel">Nivel de agua</option>
+          <option value="salinity">Salinidad</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Sensor ID</label>
+        <input type="text" [(ngModel)]="filters.sensorId" placeholder="Ej: sensor-01" (change)="loadAlerts()" />
+      </div>
+      <div class="filter-group">
+        <label>Fecha inicio</label>
+        <input type="date" [(ngModel)]="filters.startDate" (change)="loadAlerts()" />
+      </div>
+      <div class="filter-group">
+        <label>Fecha fin</label>
+        <input type="date" [(ngModel)]="filters.endDate" (change)="loadAlerts()" />
+      </div>
+      <div class="filter-group">
+        <label>Orden</label>
+        <select [(ngModel)]="filters.sortOrder" (change)="loadAlerts()">
+          <option value="desc">M&aacute;s reciente</option>
+          <option value="asc">M&aacute;s antiguo</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Resultados</label>
+        <select [(ngModel)]="filters.limit" (change)="loadAlerts()">
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+          <option [value]="250">250</option>
+          <option [value]="500">500</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <main class="alerts-main">
+    <div class="alerts-card">
+      <div class="alerts-header">
+        <h2>Alertas del sistema</h2>
+        <span class="alert-count">{{ alerts.length }} alertas</span>
+      </div>
+
+      <div class="alerts-list" *ngIf="!loading; else loadingTpl">
+        <div class="alert-item" *ngFor="let alert of alerts">
+          <div class="alert-top">
+            <span class="alert-type {{ alertTypeClass(alert.type) }}">{{ alert.type }}</span>
+            <span class="alert-param">{{ alert.parameter }}</span>
+            <span class="alert-sensor">{{ alert.sensor_id }}</span>
+          </div>
+          <p class="alert-msg">{{ alert.message }}</p>
+          <div class="alert-bottom">
+            <span class="alert-value">Valor: {{ alert.value }}</span>
+            <span class="alert-time">{{ alert.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="alerts.length === 0">
+          <p>No se encontraron alertas con los filtros seleccionados.</p>
+        </div>
+      </div>
+
+      <ng-template #loadingTpl>
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Cargando alertas...</p>
+        </div>
+      </ng-template>
+    </div>
+  </main>
 </div>

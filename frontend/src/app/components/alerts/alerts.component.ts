@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { ApiAlert } from '../../models/config.model';
@@ -11,65 +10,77 @@ import { ApiAlert } from '../../models/config.model';
   styleUrls: ['./alerts.component.css']
 })
 export class AlertsComponent implements OnInit, OnDestroy {
-  @Input() showAll?: boolean;
   alerts: ApiAlert[] = [];
-  showAllAlerts: boolean = false;
+  loading = false;
   private subscriptions: Subscription[] = [];
+
+  filters = {
+    type: '',
+    parameter: '',
+    startDate: '',
+    endDate: '',
+    sensorId: '',
+    sortOrder: 'desc' as 'asc' | 'desc',
+    limit: 100
+  };
 
   constructor(
     private alertService: AlertService,
-    private websocketService: WebsocketService,
-    private router: Router,
-    private route: ActivatedRoute
+    private websocketService: WebsocketService
   ) {}
 
   ngOnInit(): void {
-    const routeShowAll = this.route.snapshot.data['showAll'] === true;
-    this.showAllAlerts = (this.showAll ?? routeShowAll) || this.router.url === '/alerts';
-
-    this.alertService.loadAlerts();
     this.subscriptions.push(
       this.alertService.alerts$.subscribe((alerts) => {
-        this.updateAlerts(alerts);
+        this.alerts = alerts;
+        this.loading = false;
       })
     );
 
     this.subscriptions.push(
       this.websocketService.lastAlert$.subscribe((alert) => {
-        if (!alert) {
-          return;
-        }
-
-        if (this.showAllAlerts) {
+        if (alert) {
           this.addAlert(alert);
-        } else if (alert.type === 'critical') {
-          this.alerts = [alert];
         }
       })
     );
+
+    this.loadAlerts();
   }
 
-  private updateAlerts(allAlerts: ApiAlert[]): void {
-    if (this.showAllAlerts) {
-      this.alerts = allAlerts;
-    } else {
-      const criticalAlerts = allAlerts.filter(alert => alert.type === 'critical');
-      this.alerts = criticalAlerts.length > 0 ? [criticalAlerts[0]] : [];
-    }
+  loadAlerts(): void {
+    this.loading = true;
+    const params: any = {};
+    if (this.filters.type) params.type = this.filters.type;
+    if (this.filters.parameter) params.parameter = this.filters.parameter;
+    if (this.filters.startDate) params.startDate = this.filters.startDate;
+    if (this.filters.endDate) params.endDate = this.filters.endDate;
+    if (this.filters.sensorId) params.sensorId = this.filters.sensorId;
+    if (this.filters.sortOrder) params.sortOrder = this.filters.sortOrder;
+    if (this.filters.limit) params.limit = this.filters.limit;
+
+    this.alertService.loadAlerts(params);
+  }
+
+  clearFilters(): void {
+    this.filters = {
+      type: '',
+      parameter: '',
+      startDate: '',
+      endDate: '',
+      sensorId: '',
+      sortOrder: 'desc',
+      limit: 100
+    };
+    this.loadAlerts();
   }
 
   private addAlert(alert: ApiAlert): void {
     this.alerts = [alert, ...this.alerts];
   }
 
-  toggleShowAll(): void {
-    if (this.router.url === '/alerts') {
-      this.showAllAlerts = !this.showAllAlerts;
-      this.alertService.loadAlerts();
-      return;
-    }
-
-    this.router.navigate(['/alerts']);
+  alertTypeClass(type: string): string {
+    return type === 'critical' ? 'tag-critical' : 'tag-predictive';
   }
 
   ngOnDestroy(): void {

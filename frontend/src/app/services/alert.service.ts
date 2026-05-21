@@ -10,8 +10,16 @@ export class AlertService {
 
   constructor(private api: ApiService) {}
 
-  loadAlerts(): void {
-    this.api.getAlerts().pipe(
+  loadAlerts(filters?: {
+    type?: string;
+    parameter?: string;
+    startDate?: string;
+    endDate?: string;
+    sensorId?: string;
+    sortOrder?: 'asc' | 'desc';
+    limit?: number;
+  }): void {
+    this.api.getAlerts(filters).pipe(
       catchError((error) => {
         console.error('[AlertService] Error cargando alertas:', error);
         return of([]);

@@ -50,8 +50,24 @@ export class ApiService {
     return this.http.get<HistoricalReading[]>(`${this.baseUrl}/readings/history`, { params: httpParams });
   }
 
-  getAlerts(): Observable<ApiAlert[]> {
-    return this.http.get<ApiAlert[]>(`${this.baseUrl}/alerts`);
+  getAlerts(params?: {
+    type?: string;
+    parameter?: string;
+    startDate?: string;
+    endDate?: string;
+    sensorId?: string;
+    sortOrder?: 'asc' | 'desc';
+    limit?: number;
+  }): Observable<ApiAlert[]> {
+    let httpParams = new HttpParams();
+    if (params?.type) httpParams = httpParams.set('type', params.type);
+    if (params?.parameter) httpParams = httpParams.set('parameter', params.parameter);
+    if (params?.startDate) httpParams = httpParams.set('startDate', params.startDate);
+    if (params?.endDate) httpParams = httpParams.set('endDate', params.endDate);
+    if (params?.sensorId) httpParams = httpParams.set('sensorId', params.sensorId);
+    if (params?.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
+    if (params?.limit != null) httpParams = httpParams.set('limit', String(params.limit));
+    return this.http.get<ApiAlert[]>(`${this.baseUrl}/alerts`, { params: httpParams });
   }
 
   getConfig(): Observable<UserConfig | null> {
