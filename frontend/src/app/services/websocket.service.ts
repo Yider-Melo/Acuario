@@ -14,7 +14,7 @@ export class WebsocketService {
 
   constructor(private ngZone: NgZone) {
     this.socket = io(environment.socketUrl, {
-      transports: ['polling', 'websocket'],
+      transports: ['websocket'],
       reconnectionAttempts: Infinity,
       reconnectionDelay: 3000
     });
