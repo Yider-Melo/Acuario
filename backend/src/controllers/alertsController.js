@@ -1,7 +1,7 @@
 const pool = require('../config/database');
 
 async function getAlerts(req, res, next) {
-  const { type, parameter, startDate, endDate, sensorId, sortOrder, limit } = req.query;
+  const { type, parameter, startDate, endDate, sensorId, sortOrder, limit, offset } = req.query;
 
   try {
     const conditions = [];
@@ -32,14 +32,20 @@ async function getAlerts(req, res, next) {
     const filter = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
     const order = sortOrder === 'asc' ? 'ASC' : 'DESC';
     const queryLimit = limit ? ` LIMIT ${parseInt(limit, 10)}` : '';
+    const queryOffset = offset ? ` OFFSET ${parseInt(offset, 10)}` : '';
 
-    const query = `
+    const countQuery = `SELECT COUNT(*) AS total FROM alerts ${filter}`;
+    const { rows: countRows } = await pool.query(countQuery, values);
+    const total = parseInt(countRows[0].total, 10);
+
+    const dataQuery = `
       SELECT id, sensor_id, timestamp, type, parameter, value, message, extra_data
       FROM alerts ${filter}
-      ORDER BY timestamp ${order}${queryLimit}`;
+      ORDER BY timestamp ${order}${queryLimit}${queryOffset}`;
 
-    const { rows } = await pool.query(query, values);
-    res.json(rows.map((row) => ({ ...row, extra_data: row.extra_data ? JSON.parse(row.extra_data) : {} })));
+    const { rows } = await pool.query(dataQuery, values);
+    const data = rows.map((row) => ({ ...row, extra_data: row.extra_data ? JSON.parse(row.extra_data) : {} }));
+    res.json({ data, total });
   } catch (error) {
     next(error);
   }

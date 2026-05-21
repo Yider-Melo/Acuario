@@ -58,7 +58,8 @@ export class ApiService {
     sensorId?: string;
     sortOrder?: 'asc' | 'desc';
     limit?: number;
-  }): Observable<ApiAlert[]> {
+    offset?: number;
+  }): Observable<{ data: ApiAlert[]; total: number }> {
     let httpParams = new HttpParams();
     if (params?.type) httpParams = httpParams.set('type', params.type);
     if (params?.parameter) httpParams = httpParams.set('parameter', params.parameter);
@@ -67,7 +68,8 @@ export class ApiService {
     if (params?.sensorId) httpParams = httpParams.set('sensorId', params.sensorId);
     if (params?.sortOrder) httpParams = httpParams.set('sortOrder', params.sortOrder);
     if (params?.limit != null) httpParams = httpParams.set('limit', String(params.limit));
-    return this.http.get<ApiAlert[]>(`${this.baseUrl}/alerts`, { params: httpParams });
+    if (params?.offset != null) httpParams = httpParams.set('offset', String(params.offset));
+    return this.http.get<{ data: ApiAlert[]; total: number }>(`${this.baseUrl}/alerts`, { params: httpParams });
   }
 
   getConfig(): Observable<UserConfig | null> {

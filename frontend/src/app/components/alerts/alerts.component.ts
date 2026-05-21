@@ -11,6 +11,7 @@ import { ApiAlert } from '../../models/config.model';
 })
 export class AlertsComponent implements OnInit, OnDestroy {
   alerts: ApiAlert[] = [];
+  total = 0;
   loading = false;
   private subscriptions: Subscription[] = [];
 
@@ -21,7 +22,8 @@ export class AlertsComponent implements OnInit, OnDestroy {
     endDate: '',
     sensorId: '',
     sortOrder: 'desc' as 'asc' | 'desc',
-    limit: 100
+    limit: 50,
+    offset: 0
   };
 
   constructor(
@@ -38,6 +40,12 @@ export class AlertsComponent implements OnInit, OnDestroy {
     );
 
     this.subscriptions.push(
+      this.alertService.total$.subscribe((total) => {
+        this.total = total;
+      })
+    );
+
+    this.subscriptions.push(
       this.websocketService.lastAlert$.subscribe((alert) => {
         if (alert) {
           this.addAlert(alert);
@@ -50,14 +58,13 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
   loadAlerts(): void {
     this.loading = true;
-    const params: any = {};
+    const params: any = { limit: this.filters.limit, offset: this.filters.offset };
     if (this.filters.type) params.type = this.filters.type;
     if (this.filters.parameter) params.parameter = this.filters.parameter;
     if (this.filters.startDate) params.startDate = this.filters.startDate;
     if (this.filters.endDate) params.endDate = this.filters.endDate;
     if (this.filters.sensorId) params.sensorId = this.filters.sensorId;
     if (this.filters.sortOrder) params.sortOrder = this.filters.sortOrder;
-    if (this.filters.limit) params.limit = this.filters.limit;
 
     this.alertService.loadAlerts(params);
   }
@@ -70,9 +77,31 @@ export class AlertsComponent implements OnInit, OnDestroy {
       endDate: '',
       sensorId: '',
       sortOrder: 'desc',
-      limit: 100
+      limit: 50,
+      offset: 0
     };
     this.loadAlerts();
+  }
+
+  pageChanged(page: number): void {
+    this.filters.offset = (page - 1) * this.filters.limit;
+    this.loadAlerts();
+  }
+
+  get currentPage(): number {
+    return Math.floor(this.filters.offset / this.filters.limit) + 1;
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.total / this.filters.limit) || 1;
+  }
+
+  get showingFrom(): number {
+    return this.filters.offset + 1;
+  }
+
+  get showingTo(): number {
+    return Math.min(this.filters.offset + this.filters.limit, this.total);
   }
 
   private addAlert(alert: ApiAlert): void {

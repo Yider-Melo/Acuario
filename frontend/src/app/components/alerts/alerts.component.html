@@ -58,7 +58,8 @@
     <div class="alerts-card">
       <div class="alerts-header">
         <h2>Alertas del sistema</h2>
-        <span class="alert-count">{{ alerts.length }} alertas</span>
+        <span class="alert-count" *ngIf="total > 0">{{ showingFrom }}-{{ showingTo }} de {{ total }} alertas</span>
+        <span class="alert-count" *ngIf="total === 0 && !loading">0 alertas</span>
       </div>
 
       <div class="alerts-list" *ngIf="!loading; else loadingTpl">
@@ -77,6 +78,12 @@
         <div class="empty-state" *ngIf="alerts.length === 0">
           <p>No se encontraron alertas con los filtros seleccionados.</p>
         </div>
+      </div>
+
+      <div class="pagination" *ngIf="totalPages > 1 && !loading">
+        <button type="button" class="page-btn" [disabled]="currentPage === 1" (click)="pageChanged(currentPage - 1)">Anterior</button>
+        <span class="page-info">P&aacute;gina {{ currentPage }} de {{ totalPages }}</span>
+        <button type="button" class="page-btn" [disabled]="currentPage === totalPages" (click)="pageChanged(currentPage + 1)">Siguiente</button>
       </div>
 
       <ng-template #loadingTpl>
