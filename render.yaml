@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: acuario-iot-backend
+    env: node
+    region: ohio
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node src/app.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 4000
+      - key: DB_HOST
+        fromDatabase:
+          name: acuario-iot-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: acuario-iot-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: acuario-iot-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: acuario-iot-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: acuario-iot-db
+          property: database
+      - key: MQTT_BROKER_URL
+        sync: false
+      - key: MQTT_TOPIC
+        sync: false
+
+  - type: web
+    name: acuario-iot-frontend
+    env: static
+    region: ohio
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist/acuario-iot-frontend
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: acuario-iot-db
+    region: ohio
+    plan: free
+    databaseName: acuario_iot
+    ipAllowList: []
