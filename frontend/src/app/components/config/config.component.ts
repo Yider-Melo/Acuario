@@ -4,7 +4,8 @@ import { UserConfig } from '../../models/config.model';
 
 @Component({
   selector: 'app-config',
-  templateUrl: './config.component.html'
+  templateUrl: './config.component.html',
+  styleUrls: ['./config.component.css']
 })
 export class ConfigComponent implements OnInit {
   config: UserConfig = {
@@ -18,6 +19,12 @@ export class ConfigComponent implements OnInit {
     salinity_max: 35
   };
 
+  loading = true;
+  saving = false;
+  successMessage = '';
+  errorMessage = '';
+  validationErrors: string[] = [];
+
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
@@ -26,23 +33,42 @@ export class ConfigComponent implements OnInit {
         if (config) {
           this.config = config;
         }
+        this.loading = false;
       },
-      error: (error) => {
-        console.error('[ConfigComponent] Error cargando configuración:', error);
+      error: () => {
+        this.loading = false;
+        this.errorMessage = 'No se pudo cargar la configuración actual.';
       }
     });
   }
 
   saveConfig(): void {
+    this.saving = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.validationErrors = [];
+
     this.api.saveConfig(this.config).subscribe({
       next: (saved) => {
-        alert('Configuración guardada correctamente');
         this.config = saved;
+        this.saving = false;
+        this.successMessage = 'Configuración guardada correctamente.';
+        setTimeout(() => this.successMessage = '', 3000);
       },
-      error: (error) => {
-        console.error('[ConfigComponent] Error guardando configuración:', error);
-        alert('Error guardando configuración. Revisa la consola.');
+      error: (err) => {
+        this.saving = false;
+        if (err.error?.details) {
+          this.validationErrors = err.error.details;
+        } else {
+          this.errorMessage = err.error?.error || 'Error al guardar la configuración.';
+        }
       }
     });
+  }
+
+  clearMessages(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.validationErrors = [];
   }
 }

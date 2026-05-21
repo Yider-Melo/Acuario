@@ -1,40 +1,127 @@
-<div class="config-card">
-  <h2>Configuración de rangos</h2>
-  <form (ngSubmit)="saveConfig()" class="config-form">
-    <div class="range-grid">
-      <label>
-        Temperatura mínima
-        <input type="number" step="0.1" [(ngModel)]="config.temperature_min" name="temperature_min" required />
-      </label>
-      <label>
-        Temperatura máxima
-        <input type="number" step="0.1" [(ngModel)]="config.temperature_max" name="temperature_max" required />
-      </label>
-      <label>
-        pH mínimo
-        <input type="number" step="0.1" [(ngModel)]="config.ph_min" name="ph_min" required />
-      </label>
-      <label>
-        pH máximo
-        <input type="number" step="0.1" [(ngModel)]="config.ph_max" name="ph_max" required />
-      </label>
-      <label>
-        Nivel agua mínimo
-        <input type="number" step="0.1" [(ngModel)]="config.water_level_min" name="water_level_min" required />
-      </label>
-      <label>
-        Nivel agua máximo
-        <input type="number" step="0.1" [(ngModel)]="config.water_level_max" name="water_level_max" required />
-      </label>
-      <label>
-        Salinidad mínima
-        <input type="number" step="0.1" [(ngModel)]="config.salinity_min" name="salinity_min" required />
-      </label>
-      <label>
-        Salinidad máxima
-        <input type="number" step="0.1" [(ngModel)]="config.salinity_max" name="salinity_max" required />
-      </label>
+<div class="config-page">
+
+  <header class="config-header">
+    <div>
+      <h2>Configuraci&oacute;n de rangos</h2>
+      <p class="config-subtitle">Define los l&iacute;mites aceptables para cada par&aacute;metro del acuario</p>
     </div>
-    <button type="submit">Guardar configuración</button>
-  </form>
+  </header>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando configuraci&oacute;n...</p>
+  </div>
+
+  <div class="toast success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="toast error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="config-body" *ngIf="!loading" (input)="clearMessages()">
+
+    <div class="param-card temp">
+      <div class="param-header">
+        <div class="param-icon temp"></div>
+        <div>
+          <h3>Temperatura</h3>
+          <span class="param-range">0 &deg;C &mdash; 50 &deg;C</span>
+        </div>
+      </div>
+      <div class="param-inputs">
+        <label>
+          <span class="label-text">M&iacute;nimo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.temperature_min" name="temperature_min" />
+        </label>
+        <label>
+          <span class="label-text">M&aacute;ximo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.temperature_max" name="temperature_max" />
+        </label>
+        <div class="range-bar">
+          <div class="range-fill temp-fill" [style.left.%]="(config.temperature_min / 50) * 100" [style.width.%]="((config.temperature_max - config.temperature_min) / 50) * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="param-card ph">
+      <div class="param-header">
+        <div class="param-icon ph"></div>
+        <div>
+          <h3>pH</h3>
+          <span class="param-range">0 &mdash; 14</span>
+        </div>
+      </div>
+      <div class="param-inputs">
+        <label>
+          <span class="label-text">M&iacute;nimo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.ph_min" name="ph_min" />
+        </label>
+        <label>
+          <span class="label-text">M&aacute;ximo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.ph_max" name="ph_max" />
+        </label>
+        <div class="range-bar">
+          <div class="range-fill ph-fill" [style.left.%]="(config.ph_min / 14) * 100" [style.width.%]="((config.ph_max - config.ph_min) / 14) * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="param-card water">
+      <div class="param-header">
+        <div class="param-icon water"></div>
+        <div>
+          <h3>Nivel de agua</h3>
+          <span class="param-range">0 cm &mdash; 200 cm</span>
+        </div>
+      </div>
+      <div class="param-inputs">
+        <label>
+          <span class="label-text">M&iacute;nimo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.water_level_min" name="water_level_min" />
+        </label>
+        <label>
+          <span class="label-text">M&aacute;ximo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.water_level_max" name="water_level_max" />
+        </label>
+        <div class="range-bar">
+          <div class="range-fill water-fill" [style.left.%]="(config.water_level_min / 200) * 100" [style.width.%]="((config.water_level_max - config.water_level_min) / 200) * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="param-card salinity">
+      <div class="param-header">
+        <div class="param-icon salinity"></div>
+        <div>
+          <h3>Salinidad</h3>
+          <span class="param-range">0 ppt &mdash; 50 ppt</span>
+        </div>
+      </div>
+      <div class="param-inputs">
+        <label>
+          <span class="label-text">M&iacute;nimo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.salinity_min" name="salinity_min" />
+        </label>
+        <label>
+          <span class="label-text">M&aacute;ximo</span>
+          <input type="number" step="0.1" [(ngModel)]="config.salinity_max" name="salinity_max" />
+        </label>
+        <div class="range-bar">
+          <div class="range-fill salinity-fill" [style.left.%]="(config.salinity_min / 50) * 100" [style.width.%]="((config.salinity_max - config.salinity_min) / 50) * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-list" *ngIf="validationErrors.length > 0">
+      <p class="error-title">Errores de validaci&oacute;n:</p>
+      <ul>
+        <li *ngFor="let err of validationErrors">{{ err }}</li>
+      </ul>
+    </div>
+
+    <div class="config-actions">
+      <button type="button" class="btn-save" (click)="saveConfig()" [disabled]="saving">
+        <span *ngIf="!saving">Guardar configuraci&oacute;n</span>
+        <span *ngIf="saving">Guardando...</span>
+      </button>
+    </div>
+
+  </div>
 </div>
