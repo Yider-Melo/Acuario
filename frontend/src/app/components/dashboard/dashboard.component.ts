@@ -3,7 +3,9 @@ import { Subscription, interval } from 'rxjs';
 import { MqttService } from '../../services/mqtt.service';
 import { ApiService } from '../../services/api.service';
 import { WebsocketService } from '../../services/websocket.service';
+import { AlertService } from '../../services/alert.service';
 import { SensorReading } from '../../models/sensor.model';
+import { ApiAlert } from '../../models/config.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,13 +17,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   latestReading: SensorReading | null = null;
   mqttStatus = 'offline';
   wsConnected = false;
+
+  notifications: ApiAlert[] = [];
+  notificationsFilter: 'all' | 'critical' | 'predictive' = 'all';
+  panelOpen = false;
+  maxNotifications = 20;
+
   private subscriptions: Subscription[] = [];
   private pollingSubscription: Subscription | null = null;
 
   constructor(
     private mqttService: MqttService,
     private apiService: ApiService,
-    private websocketService: WebsocketService
+    private websocketService: WebsocketService,
+    private alertService: AlertService
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +62,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
     );
 
+    this.subscriptions.push(
+      this.websocketService.lastAlert$.subscribe((alert) => {
+        if (alert) {
+          this.notifications = [alert, ...this.notifications].slice(0, 200);
+        }
+      })
+    );
+
+    this.alertService.loadAlerts({ limit: 50, sortOrder: 'desc' });
+    this.subscriptions.push(
+      this.alertService.alerts$.subscribe((alerts) => {
+        this.notifications = alerts;
+      })
+    );
+
     this.apiService.getLatestReadings(10).subscribe((readings) => {
       this.readings = readings;
       this.latestReading = readings[0] || null;
@@ -66,6 +90,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  get filteredNotifications(): ApiAlert[] {
+    if (this.notificationsFilter === 'all') return this.notifications.slice(0, this.maxNotifications);
+    return this.notifications.filter((n) => n.type === this.notificationsFilter).slice(0, this.maxNotifications);
+  }
+
+  get unreadCount(): number {
+    return this.notifications.length;
+  }
+
+  togglePanel(): void {
+    this.panelOpen = !this.panelOpen;
+  }
+
+  setFilter(filter: 'all' | 'critical' | 'predictive'): void {
+    this.notificationsFilter = filter;
+  }
+
+  clearNotifications(): void {
+    this.notifications = [];
+  }
+
+  showMore(): void {
+    this.maxNotifications += 20;
   }
 
   ngOnDestroy(): void {
