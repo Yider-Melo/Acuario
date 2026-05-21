@@ -1,0 +1,18 @@
+<div class="alerts-card">
+  <div class="alerts-header">
+    <h2>Alertas</h2>
+    <button type="button" (click)="toggleShowAll()">{{ showAllAlerts ? 'Mostrar solo la última' : 'Mostrar todas las alertas' }}</button>
+    <span class="tag">Actualizaciones constantes</span>
+  </div>
+  <div class="alert-list">
+    <div class="alert-item" *ngFor="let alert of alerts">
+      <div class="alert-meta">
+        <strong>{{ alert.type | uppercase }}</strong>
+        <span>{{ alert.parameter }}</span>
+        <span>{{ alert.timestamp | date:'short' }}</span>
+      </div>
+      <p>{{ alert.message }}</p>
+      <small>Valor: {{ alert.value }}</small>
+    </div>
+  </div>
+</div>

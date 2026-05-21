@@ -1,0 +1,51 @@
+<div class="dashboard-container">
+  <div class="ocean-bg">
+    <div class="bubble b1"></div>
+    <div class="bubble b2"></div>
+    <div class="bubble b3"></div>
+    <div class="bubble b4"></div>
+    <div class="bubble b5"></div>
+  </div>
+
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h2>Panel de Monitoreo</h2>
+      <p class="subtitle">Datos en tiempo real del acuario</p>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" [class.online]="wsConnected"></span>
+      <span class="status-label">{{ wsConnected ? 'En vivo' : 'Conectando...' }}</span>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card" *ngIf="latestReading">
+      <div class="stat-icon temp"></div>
+      <h3>Temperatura</h3>
+      <p class="stat-value">{{ latestReading.temperature }}<span class="unit"> &deg;C</span></p>
+    </div>
+    <div class="stat-card" *ngIf="latestReading">
+      <div class="stat-icon ph"></div>
+      <h3>pH</h3>
+      <p class="stat-value">{{ latestReading.ph }}</p>
+    </div>
+    <div class="stat-card" *ngIf="latestReading">
+      <div class="stat-icon water"></div>
+      <h3>Nivel de agua</h3>
+      <p class="stat-value">{{ latestReading.waterLevel }}<span class="unit"> cm</span></p>
+    </div>
+    <div class="stat-card" *ngIf="latestReading">
+      <div class="stat-icon salinity"></div>
+      <h3>Salinidad</h3>
+      <p class="stat-value">{{ latestReading.salinity }}<span class="unit"> ppt</span></p>
+    </div>
+  </div>
+
+  <section class="chart-section">
+    <div class="chart-header">
+      <h3>Historial de sensores</h3>
+      <button type="button" class="btn-history" routerLink="/history">Ver hist&oacute;rico</button>
+    </div>
+    <app-realtime-chart [readings]="readings"></app-realtime-chart>
+  </section>
+</div>

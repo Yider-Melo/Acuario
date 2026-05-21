@@ -1,0 +1,72 @@
+.alerts-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.alerts-header h2 {
+  margin: 0;
+}
+
+.alerts-header button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+
+.alerts-header button:hover {
+  background: #2563eb;
+}
+
+.alert-list {
+  max-height: 620px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 8px;
+}
+
+.alert-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f8fafc;
+}
+
+.alert-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.alert-meta strong {
+  color: #dc2626;
+}
+
+.alert-meta span {
+  color: #475569;
+}
+
+.alert-item p {
+  margin: 0 0 8px;
+  color: #0f172a;
+}
+
+.alert-item small {
+  color: #64748b;
+}

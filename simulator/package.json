@@ -1,0 +1,11 @@
+{
+  "name": "acuario-iot-simulator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node mqtt-publisher.js"
+  },
+  "dependencies": {
+    "mqtt": "^5.0.0"
+  }
+}

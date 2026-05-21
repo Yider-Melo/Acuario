@@ -1,0 +1,95 @@
+<div class="history-page">
+  <aside class="filter-panel">
+    <div class="filter-header">
+      <h3>Filtros</h3>
+      <button type="button" class="btn-clear" (click)="clearFilters()">Limpiar</button>
+    </div>
+    <div class="filter-body">
+      <div class="filter-group">
+        <label>Fecha inicio</label>
+        <input type="date" [(ngModel)]="filters.startDate" (change)="loadHistory()" />
+      </div>
+      <div class="filter-group">
+        <label>Fecha fin</label>
+        <input type="date" [(ngModel)]="filters.endDate" (change)="loadHistory()" />
+      </div>
+      <div class="filter-group">
+        <label>Sensor ID</label>
+        <input type="text" [(ngModel)]="filters.sensorId" placeholder="Ej: sensor-01" (change)="loadHistory()" />
+      </div>
+      <div class="filter-group">
+        <label>Par&aacute;metro</label>
+        <select [(ngModel)]="filters.parameter" (change)="loadHistory()">
+          <option value="">Todos</option>
+          <option value="temperature">Temperatura</option>
+          <option value="ph">pH</option>
+          <option value="waterLevel">Nivel de agua</option>
+          <option value="salinity">Salinidad</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Orden</label>
+        <select [(ngModel)]="filters.sortOrder" (change)="loadHistory()">
+          <option value="desc">M&aacute;s reciente</option>
+          <option value="asc">M&aacute;s antiguo</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Resultados</label>
+        <select [(ngModel)]="filters.limit" (change)="loadHistory()">
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+          <option [value]="250">250</option>
+          <option [value]="500">500</option>
+          <option [value]="1000">1000</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <main class="history-main">
+    <div class="history-card">
+      <div class="history-header">
+        <h2>Historial de lecturas</h2>
+        <span class="reading-count">{{ history.length }} registros</span>
+      </div>
+
+      <div class="history-table-wrapper" *ngIf="!loading; else loadingTpl">
+        <table class="history-table" *ngIf="history.length > 0; else emptyTpl">
+          <thead>
+            <tr>
+              <th>Sensor</th>
+              <th>Fecha y Hora</th>
+              <th>Temperatura</th>
+              <th>pH</th>
+              <th>Nivel agua</th>
+              <th>Salinidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of history">
+              <td><span class="sensor-badge">{{ row.sensor_id }}</span></td>
+              <td>{{ row.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>{{ row.temperature ?? row.value ?? '-' }} &deg;C</td>
+              <td>{{ row.ph ?? '-' }}</td>
+              <td>{{ row.water_level ?? '-' }} cm</td>
+              <td>{{ row.salinity ?? '-' }} ppt</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #emptyTpl>
+          <div class="empty-state">
+            <p>No se encontraron lecturas con los filtros seleccionados.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <ng-template #loadingTpl>
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Cargando datos...</p>
+        </div>
+      </ng-template>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,23 @@
+{
+  "brokerUrl": "mqtt://localhost:1883",
+  "topic": "acuario/sensores/sensor-01",
+  "intervalMs": 3000,
+  "baseValues": {
+    "temperature": 35.0,
+    "ph": 7.5,
+    "waterLevel": 55.0,
+    "salinity": 32.0
+  },
+  "trends": {
+    "temperature": 0.02,
+    "ph": -0.01,
+    "waterLevel": 0.1,
+    "salinity": 0.05
+  },
+  "noise": {
+    "temperature": 0.6,
+    "ph": 0.08,
+    "waterLevel": 0.5,
+    "salinity": 0.2
+  }
+}
