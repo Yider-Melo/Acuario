@@ -11,10 +11,15 @@ export class MqttService {
   public status$ = new BehaviorSubject<string>('offline');
 
   constructor(private ngZone: NgZone) {
+    if (!environment.mqttBroker) {
+      console.log('[MQTT] Broker no configurado. Usando Socket.io como fuente de datos.');
+      return;
+    }
     this.connect();
   }
 
   connect(): void {
+    if (!environment.mqttBroker) return;
     this.client = mqtt.connect(environment.mqttBroker, {
       connectTimeout: 30000,
       reconnectPeriod: 5000,
