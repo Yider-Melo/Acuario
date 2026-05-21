@@ -1,5 +1,5 @@
 {
-  "brokerUrl": "mqtt://test.mosquitto.org:1883",
+  "brokerUrl": "mqtt://broker.emqx.io:1883",
   "topic": "acuario/sensores/sensor-01",
   "intervalMs": 3000,
   "baseValues": {
