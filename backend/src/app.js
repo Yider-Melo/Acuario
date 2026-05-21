@@ -23,8 +23,9 @@ app.use(express.json());
 app.use('/api', apiRoutes);
 
 app.use((err, req, res, next) => {
-  console.error('[Express Error]', err.message);
-  res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' });
+  const msg = typeof err === 'object' ? (err.message || JSON.stringify(err)) : String(err);
+  console.error('[Express Error]', msg);
+  res.status(err.status || 500).json({ error: msg });
 });
 
 io.on('connection', (socket) => {

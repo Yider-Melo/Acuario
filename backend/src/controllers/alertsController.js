@@ -44,7 +44,7 @@ async function getAlerts(req, res, next) {
       ORDER BY timestamp ${order}${queryLimit}${queryOffset}`;
 
     const { rows } = await pool.query(dataQuery, values);
-    const data = rows.map((row) => ({ ...row, extra_data: row.extra_data ? JSON.parse(row.extra_data) : {} }));
+    const data = rows.map((row) => ({ ...row, extra_data: row.extra_data || {} }));
     res.json({ data, total });
   } catch (error) {
     next(error);
