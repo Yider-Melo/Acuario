@@ -9,14 +9,14 @@ import { UserConfig } from '../../models/config.model';
 })
 export class ConfigComponent implements OnInit {
   config: UserConfig = {
-    temperature_min: 22,
-    temperature_max: 28,
-    ph_min: 7,
-    ph_max: 8,
-    water_level_min: 30,
-    water_level_max: 70,
-    salinity_min: 30,
-    salinity_max: 35
+    temperature_min: 23,
+    temperature_max: 27,
+    ph_min: 7.2,
+    ph_max: 7.8,
+    water_level_min: 50,
+    water_level_max: 60,
+    salinity_min: 31,
+    salinity_max: 33
   };
 
   loading = true;

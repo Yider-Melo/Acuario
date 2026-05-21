@@ -2,10 +2,10 @@ const pool = require('../config/database');
 const trendAnalytics = require('./trend-analytics');
 
 const CRITICAL_RANGES = {
-  temperature: { min: 20, max: 30 },
-  ph: { min: 6.8, max: 8.2 },
-  waterLevel: { min: 15, max: 100 },
-  salinity: { min: 28, max: 36 }
+  temperature: { min: 23, max: 27 },
+  ph: { min: 7.2, max: 7.8 },
+  waterLevel: { min: 50, max: 60 },
+  salinity: { min: 31, max: 33 }
 };
 
 async function getUserConfig() {
